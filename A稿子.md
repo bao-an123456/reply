@@ -48,6 +48,6 @@ controller 这里面是一些提供给前端的接口
   这些具体的实现方法在FkReimMainServiceImpl.java 里面
 
   然后下面三个vue是我负责的前端部分
- ReimbursementDetail.vue     详情页主页面，6个区域的折叠和行程补助联动
- DataTable.vue    数据列表展示表格组件（含 Teleport 菜单与定位计算）
- CostAllocationSection.vue           #费用分摊区块组件
+ ReimbursementDetail.vue     详情主页面，包含6个区块的折叠和展开，通过监听@toggle事件来切换状态
+ DataTable.vue    渲染报销单，设置按钮
+ CostAllocationSection.vue           #费用分摊，通过三个函数来实现前端校验
