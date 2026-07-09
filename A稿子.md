@@ -1,15 +1,11 @@
 老师好，我是计科2301班的 ~
-有关该报销系统，我主要负责后端代码和数据库代码的编写，同时书写了少量前端的vue代码
+该报销系统，我主要负责后端代码和数据库代码的编写，同时书写了少量前端的vue代码
 
-这个是我数据库代码部分
-
-我先根据设计文档中给的一些数据建立了基础表，然后插入了基础数据。
+根据设计文档的数据建立了基础表，并插入这些数据
 这些业务表，我是根据页面原型分别建立了报销主表，补助行程表，补助信息表，补助日历表，费用分摊表。
-里面还定义了一些索引（Key）加快多表关联查询的速度。
-同时定义了外键约束（CONSTRAINT）来确保数据的引用完整性。
-外键上配置了 ON DELETE 。用户在列表页点击删除按钮时删除主表，数据库会删除行程、补助、日历和分摊等子表中的关联数据。最终不会留下垃圾数据。
-
-这个就是我负责的代码框架
+索引（Key）加快多表关联查询的速度。
+外键约束（CONSTRAINT）来确保数据的引用完整性。（可能引发死锁）
+ON DELETE级联删除 。用户在列表页点击删除按钮时删除主表，数据库会删除行程、补助、日历和分摊等子表中的关联数据。（可能出现误删操作）
 
 pom.xml
 xml里面装有一些依赖
@@ -18,22 +14,21 @@ DEV tools进行热部署，        修改代码后不需要重新启动项目
 MyBatis-plus依赖
 后面的就是数据库驱动和lombok，不用手写getter,setter这些方法。
 
-application.properties
-这个应用配置文件,从github上拉取项目重新启动的时候会显示8080占用，所以这里设置了改成了8081
+application.properties,这个应用配置文件
 
-entity层下的business业务文件夹是我负责的，这里面都是参照数据库的代码进行编写。
+entity层下的business，参照数据库的代码进行编写。
 @TableId这个注解是用来标识主键的，然后assign_id使用雪花算法通过时间戳生成唯一ID
 
-DTO和VO分别是接收前端的数据和将数据打包给前端徐然展示
+DTO和VO分别是接收前端的数据和将数据打包给前端渲染展示
 QueryDTO 接收前端传来的查询参数
 SaveDTO 接收保险单详情界面的参数
 DetailVO 详情界面渲染的数据，由于是和用户传进来的数据是一样的，所以这个类对象里的变量相较于SaveDTO里面的几乎是一样的
 ListVO #列表页显示的内容
 
-mapper层和service层的接口分别继承了BaseMapper和IService，可以无SQL实现基础的增删改查。对于复杂点的项目，可以在resouces/mapper文件夹下的xml文件，手动书写sql语句。
+mapper层和service层的接口分别继承了BaseMapper和IService，对于当前这个项目就不用手写sql语句。对于复杂点的项目，可以在resouces/mapper文件夹下的xml文件，手动书写sql语句。
 
 config里面这个@mapperscan注解制定了mapper接口的扫描路径，就不用每个文件都写@mapper注解了。
-这里配置了一下分页插件，然后Service里面因为继承了IService也能无sql实现物理分页，避免了将数据库里面的数据拉到虚拟机里面来使用内存分页。
+这里配置了一下分页插件，然后Service里面因为继承了IService，也不用写sql，便可实现物理分页，避免了将数据库里面的数据拉到虚拟机里面来使用内存分页。
 
 controller 这里面是一些提供给前端的接口
 列表页用到的
@@ -47,7 +42,12 @@ controller 这里面是一些提供给前端的接口
     /cancle/{id} 作废，将status设置为2，前端变为只读状态，不允许修改
   这些具体的实现方法在FkReimMainServiceImpl.java 里面
 
+LambdaQueryWrapper调用writereplace方法及析出对应的方法属性和数据库字段
+
+
+
   然后下面三个vue是我负责的前端部分
  ReimbursementDetail.vue     详情主页面，包含6个区块的折叠和展开，通过监听@toggle事件来切换状态
- DataTable.vue    渲染报销单，设置按钮
  CostAllocationSection.vue           #费用分摊，通过三个函数来实现前端校验
+
+DataTable.vue 渲染报销单，设置按钮
